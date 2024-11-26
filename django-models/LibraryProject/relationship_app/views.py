@@ -1,7 +1,6 @@
-from django.shortcuts import render
-from django.views.generic.detail import DetailView 
-from relationship_app.models import Book
-from relationship_app.models import Library
+from django.shortcuts import render 
+from relationship_app.models import Book, Library
+from django.views.generic.detail import DetailView
 # Create your views here.
 def list_books(request):
   books= Book.objects.all()
