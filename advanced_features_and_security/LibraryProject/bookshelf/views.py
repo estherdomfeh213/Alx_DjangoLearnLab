@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import Article  # Import your model
 from .models import Book
-from .models import ExampleForm 
+from .forms import ExampleForm
 # Create your views here.
 # Create groups
 
