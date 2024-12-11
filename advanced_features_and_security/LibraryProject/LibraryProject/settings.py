@@ -23,7 +23,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-3)0ei#$s)j7n2(@^5vwbf57+fu_goxb3(q*os(q51-^g3yc-5r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False #! Turn of debug mode in production 
+
+# Enable browser-side protection 
+SECURE_BROWSER_XSS_FILTER = True 
+X_FRAME_OPTIONS = 'DENY' #! Prevent browsers from being embedded in iframe 
+SECURE_CONTENT_TYPE_NOSNIFF = True #! Prevent browsers from sniffing content types 
+
+
+# Ensure cookies are only sent over HTTPS 
+CSRF_COOKIE_SECURE = True #! Only send CSRF cookie over HTTPS
+SESSION_COOKIE_SECURE = True #! Only send session cookie over HTTPS 
+
+# Enable Secure HTTPS (set this to True only if yopu are using HTTPS in production)
+SECURE_SSL_REDIRECT = True # Redirect all HTTP request to HTTPS 
+
+# Enable cookies are HttpOnly and SameSite for additional security 
+CSRF_COOKIE_HTTPONLY = True 
+SESSION_COOKIE_HTTPONLY = True 
+CSRF_COOKIE_SAMESITE = 'Strict'  #! Proteet againt cross-site request forgery 
+SESSION_COOKIE_SAMESITE = 'Strict'
 
 ALLOWED_HOSTS = []
 
@@ -39,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',   
     'bookshelf',
     'relationship_app',
+    'csp'
 ]
 
 MIDDLEWARE = [
@@ -49,7 +69,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
+
+# Configure CSP header
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", 'trusted-script-domain.com')
+CSP_STYLE_SRC = ("'self'", 'trusted-style-domain.com')
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
@@ -125,3 +151,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
