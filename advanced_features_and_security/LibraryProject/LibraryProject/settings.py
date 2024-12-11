@@ -44,6 +44,16 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Strict'  #! Proteet againt cross-site request forgery 
 SESSION_COOKIE_SAMESITE = 'Strict'
 
+# Enforce HTTPS redirect 
+SECURE_SSL_REDIRECT = True  #! Redirect all HTTP requests to HTTPS 
+
+
+# HTTPS Strict Transport Security (HSTS) Settings 
+SECURE_HSTS_SECONDS = 31536000  # One year (in seconds)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Include subdomains in HSTS policy
+SECURE_HSTS_PRELOAD = True  # Allow preloading of HSTS settings
+
+
 ALLOWED_HOSTS = []
 
 
