@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import Article  # Import your model
+from .models import Book
 
 # Create your views here.
 # Create groups
@@ -12,7 +13,13 @@ def edit_view(request):
     # Logic for editing
     return render(request, 'edit_template.html')
   
-  
+
+@permission_required('bookshelf.can_view', raise_exception=True)
+def book_list(request):
+    books = Book.objects.all()  # Fetch all books
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
+ 
 editors_group, _ = Group.objects.get_or_create(name="Editors")
 viewers_group, _ = Group.objects.get_or_create(name="Viewers")
 admins_group, _ = Group.objects.get_or_create(name="Admins")
