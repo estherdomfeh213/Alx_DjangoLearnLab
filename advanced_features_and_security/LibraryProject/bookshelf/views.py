@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import Article  # Import your model
 from .models import Book
-
+from .models import ExampleForm 
 # Create your views here.
 # Create groups
 
@@ -37,3 +37,15 @@ admins_group.permissions.set(permissions)
 def edit_article(request, article_id):
     # Logic for editing an article
     return render(request, 'edit_article.html', {})
+
+
+
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Handle valid form
+            pass
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/form_example.html', {'form': form})

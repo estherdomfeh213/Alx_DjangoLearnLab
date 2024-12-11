@@ -4,3 +4,9 @@
   <input type="text" name="book_name" />
   <button type="submit">Submit</button>
 </form>
+<h1>Book List</h1>
+<ul>
+    {% for book in books %}
+        <li>{{ book.title }} by {{ book.author }}</li>
+    {% endfor %}
+</ul>
