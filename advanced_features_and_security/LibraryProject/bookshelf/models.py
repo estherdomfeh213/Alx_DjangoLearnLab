@@ -55,3 +55,19 @@ class YourModel(models.Model):
             ("can_edit", "Can edit items"),
             ("can_delete", "Can delete items"),
         ]
+        
+        
+
+
+class Article(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        permissions = [
+            ("can_view", "Can view articles"),
+            ("can_create", "Can create articles"),
+            ("can_edit", "Can edit articles"),
+            ("can_delete", "Can delete articles"),
+        ]
