@@ -8,6 +8,6 @@ class BookList(generics.ListAPIView):
     serializer_class = BookSerializer
 
 
-class BookViewSet(ModelViewSet):
+class BookViewSet(viewsets.ModelViewSet):
   queryset  = Book.objets.all()
   serializer_class = BookSerializer 
