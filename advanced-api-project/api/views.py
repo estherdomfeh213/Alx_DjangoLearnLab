@@ -1,4 +1,6 @@
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
+#from django_filters import rest_framework as filters
+from rest_framework import filters
 from rest_framework import viewsets
 from django.core.exceptions import ValidationError
 from rest_framework import generics 

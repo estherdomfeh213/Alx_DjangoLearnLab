@@ -72,7 +72,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'advanced_api_project.wsgi.application'
 
-
+import os 
+import sys 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -83,6 +84,17 @@ DATABASES = {
     }
 }
 
+
+# Configure a separate test database if the environment is "test"
+if 'test' in sys.argv or os.environ.get('DJANGO_SETTINGS_MODULE') == 'myproject.settings.test':
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'Testdatabase',  
+        'USER': 'estherdomfeh',      
+        'PASSWORD': 'mytestpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
