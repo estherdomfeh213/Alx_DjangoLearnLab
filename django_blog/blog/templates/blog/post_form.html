@@ -1,0 +1,10 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<h1>{{ view.action|default:"Create" }} Post</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}
