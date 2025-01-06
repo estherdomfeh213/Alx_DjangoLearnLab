@@ -6,6 +6,11 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from .forms import ProfileUpdateForm
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Post
+from django.urls import reverse_lazy
 
 # def home(request):
 #     return render(request, 'blog/home.html')
@@ -56,3 +61,51 @@ def profile(request):
     else:
         profile_form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'blog/profile.html', {'profile_form': profile_form})
+
+
+
+# List View
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'  # Replace with your template path
+    context_object_name = 'posts'
+    ordering = ['-published_date']  # Latest posts first
+
+# Detail View
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'  # Replace with your template path
+
+# Create View
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    template_name = 'blog/post_form.html'  # Replace with your template path
+    fields = ['title', 'content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+# Update View
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    template_name = 'blog/post_form.html'
+    fields = ['title', 'content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+# Delete View
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = reverse_lazy('post-list')
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
