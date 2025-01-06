@@ -1,0 +1,11 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<h1>{{ object.title }}</h1>
+<p>{{ object.content }}</p>
+<p><em>Published on {{ object.published_date }}</em></p>
+{% if user == object.author %}
+    <a href="{% url 'post-update' object.pk %}">Edit</a>
+    <a href="{% url 'post-delete' object.pk %}">Delete</a>
+{% endif %}
+{% endblock %}
