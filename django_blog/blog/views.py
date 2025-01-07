@@ -12,6 +12,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comment 
 from django.urls import reverse_lazy
 from .forms import CommentForm
+from django.urls import reverse
+from django.views.generic.edit import CreateView, UpdateView
 
 # def home(request):
 #     return render(request, 'blog/home.html')
@@ -112,6 +114,38 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == post.author
     
 #* Comment view 
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    template_name = 'blog/comment_form.html'
+    fields = ['content']
+
+    def form_valid(self, form):
+        post_id = self.kwargs['post_id']
+        post = Post.objects.get(pk=post_id)
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.post.id})
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    template_name = 'blog/comment_form.html'
+    fields = ['content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.post.id})
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+
 @login_required
 def add_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id)
