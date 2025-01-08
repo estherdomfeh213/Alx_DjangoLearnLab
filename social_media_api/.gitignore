@@ -1,0 +1,9 @@
+
+# Python bytecode files
+__pycache__/
+
+# Django migrations
+*/migrations/
+
+# Database file
+db.sqlite3

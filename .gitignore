@@ -1,0 +1,4 @@
+#! ignore the following 
+api_env/
+*pycache
+*pyc

@@ -1,0 +1,5 @@
+# gitignore the following 
+base/
+*.pyc
+__pycache__/
+db.sqlite3
