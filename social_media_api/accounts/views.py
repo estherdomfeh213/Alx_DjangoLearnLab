@@ -46,39 +46,42 @@ class LoginView(APIView):
 #     request.user.following.remove(user_to_unfollow)
 #     return Response({"message": "Unfollowed successfully"}, status=200)
 
+
+
+# Assuming CustomUser is the User model used for authentication
 CustomUser = get_user_model()
 
-class FollowUserView(APIView):
+class FollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request, user_id, *args, **kwargs):
         try:
             user_to_follow = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Ensure user isn't trying to follow themselves
         if user_to_follow == request.user:
-            return Response({"error": "You cannot follow yourself"}, status=400)
+            return Response({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
         
         # Add the user_to_follow to the current user's following list
         request.user.following.add(user_to_follow)
-        return Response({"message": f"Successfully followed user {user_id}"}, status=200)
+        return Response({"message": f"Successfully followed user {user_id}"}, status=status.HTTP_200_OK)
 
 
-class UnfollowUserView(APIView):
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request, user_id, *args, **kwargs):
         try:
             user_to_unfollow = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Ensure user isn't trying to unfollow themselves
         if user_to_unfollow == request.user:
-            return Response({"error": "You cannot unfollow yourself"}, status=400)
+            return Response({"error": "You cannot unfollow yourself"}, status=status.HTTP_400_BAD_REQUEST)
         
         # Remove the user_to_unfollow from the current user's following list
         request.user.following.remove(user_to_unfollow)
-        return Response({"message": f"Successfully unfollowed user {user_id}"}, status=200)
+        return Response({"message": f"Successfully unfollowed user {user_id}"}, status=status.HTTP_200_OK)
