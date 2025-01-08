@@ -188,3 +188,57 @@ To effectively document the API endpoints for posts and comments, you can provid
 ### **Testing Instructions**:
 - You can use Postman to test each endpoint, sending the necessary `Authorization` token in the headers for each request.
 
+
+
+1. Follow a User
+Endpoint: /follow/<int:user_id>/
+Method: POST
+Description: Allows a user to follow another user.
+Request Example:
+http
+Copy code
+POST /follow/5/
+Request Body:
+json
+Copy code
+{
+  "user_id": 5
+}
+Response Example:
+json
+Copy code
+{
+  "message": "Successfully followed user 5."
+}
+Error Response (User already followed):
+json
+Copy code
+{
+  "error": "You are already following this user."
+}
+2. Unfollow a User
+Endpoint: /unfollow/<int:user_id>/
+Method: POST
+Description: Allows a user to unfollow another user.
+Request Example:
+http
+Copy code
+POST /unfollow/5/
+Request Body:
+json
+Copy code
+{
+  "user_id": 5
+}
+Response Example:
+json
+Copy code
+{
+  "message": "Successfully unfollowed user 5."
+}
+Error Response (User not followed):
+json
+Copy code
+{
+  "error": "You are not following this user."
+}
