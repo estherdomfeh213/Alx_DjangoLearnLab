@@ -16,12 +16,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
-        password = validated_data.pop('password')  # Extract password field
-        user = get_user_model().objects.create_user(**validated_data)  # Create user instance
-        user.set_password(password)  # Set the password securely
-        user.save()  # Save the user instance
-        # Create and return the token after user is created
-        token, created = Token.objects.get_or_create(user=user)
+        password = validated_data.pop('password')  # Extract password
+        user = get_user_model().objects.create_user(**validated_data)  # Create the user
+        user.set_password(password)  # Securely set the password
+        user.save()  # Save the user to the database
+
+        # Create a token for the user
+        token = Token.objects.create(user=user)  
         return user, token
 
 
