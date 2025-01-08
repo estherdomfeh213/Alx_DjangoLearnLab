@@ -15,7 +15,7 @@ from .forms import CommentForm
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView
 from django.db.models import Q
-
+from taggit.models import Tag
 
 # def home(request):
 #     return render(request, 'blog/home.html')
@@ -202,3 +202,18 @@ class SearchResultsView(ListView):
             Q(content__icontains=query) |
             Q(tags__name__icontains=query)
         ).distinct()
+        
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/posts_by_tag.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        self.tag = get_object_or_404(Tag, slug=self.kwargs['tag_slug'])
+        return Post.objects.filter(tags__in=[self.tag])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.tag
+        return context
