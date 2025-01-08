@@ -11,6 +11,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
 from rest_framework.views import APIView
+from .serializers import CustomUserSerializer
 
 
 class RegisterView(APIView):
@@ -34,25 +35,42 @@ class LoginView(APIView):
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class FollowUserView(APIView):
+class FollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
+        # Fetch the user to follow
         try:
             user_to_follow = CustomUser.objects.get(id=user_id)
-            request.user.following.add(user_to_follow)  # Add user_to_follow to the following list
+            
+            # Check if the user is already following
+            if user_to_follow in request.user.following.all():
+                return Response({"message": f"You are already following {user_to_follow.username}"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Add user to the following list
+            request.user.following.add(user_to_follow)
             return Response({"message": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
+
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-class UnfollowUserView(APIView):
+
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
+        # Fetch the user to unfollow
         try:
             user_to_unfollow = CustomUser.objects.get(id=user_id)
-            request.user.following.remove(user_to_unfollow)  # Remove user_to_unfollow from the following list
+            
+            # Check if the user is not following the other user
+            if user_to_unfollow not in request.user.following.all():
+                return Response({"message": f"You are not following {user_to_unfollow.username}"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Remove user from the following list
+            request.user.following.remove(user_to_unfollow)
             return Response({"message": f"You have unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
+
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
