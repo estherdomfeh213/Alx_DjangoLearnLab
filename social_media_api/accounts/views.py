@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from .serializers import CustomUserSerializer
 
 
+
 class RegisterView(APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
@@ -36,12 +37,12 @@ class LoginView(APIView):
 
 
 class FollowUserView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, user_id):
+    def post(self, request):
         # Fetch the user to follow
         try:
-            user_to_follow = CustomUser.objects.get(id=user_id)
+            user_to_follow = CustomUser.objects.all()
             
             # Check if the user is already following
             if user_to_follow in request.user.following.all():
@@ -56,12 +57,12 @@ class FollowUserView(generics.GenericAPIView):
 
 
 class UnfollowUserView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, user_id):
+    def post(self, request):
         # Fetch the user to unfollow
         try:
-            user_to_unfollow = CustomUser.objects.get(id=user_id)
+            user_to_unfollow = CustomUser.objects.all()
             
             # Check if the user is not following the other user
             if user_to_unfollow not in request.user.following.all():
