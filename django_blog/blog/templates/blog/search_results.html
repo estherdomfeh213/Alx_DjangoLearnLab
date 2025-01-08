@@ -1,0 +1,14 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+<h1>Search Results</h1>
+{% for post in object_list %}
+    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+    <p>{{ post.content|truncatewords:20 }}</p>
+{% empty %}
+    <p>No posts found.</p>
+{% endfor %}
+
+
+{% endblock %}

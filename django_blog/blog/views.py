@@ -14,6 +14,8 @@ from django.urls import reverse_lazy
 from .forms import CommentForm
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView
+from django.db.models import Q
+
 
 # def home(request):
 #     return render(request, 'blog/home.html')
@@ -187,3 +189,16 @@ class CommentDeleteView(DeleteView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(author=self.request.user)
+    
+    
+class SearchResultsView(ListView):
+    model = Post
+    template_name = 'blog/search_results.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        return Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
