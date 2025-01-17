@@ -11,7 +11,8 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
 from rest_framework.views import APIView
-from .serializers import CustomUserSerializer
+from .serializers import CustomUser
+from .models import Follow 
 
 
 
