@@ -4,6 +4,13 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from .models import Post, Like
+from notifications.models import Notification
+from django.contrib.contenttypes.models import ContentType
 
 # Define the Post model dynamically using apps.get_model() to avoid circular imports
 
@@ -39,15 +46,37 @@ class Like(models.Model):
         return f'{self.user} liked {self.post.title}'
 
     
-# class Notification(models.Model):
-#     recipient = models.ForeignKey(CustomUser, related_name="notifications", on_delete=models.CASCADE)
-#     actor = models.ForeignKey(CustomUser, related_name="actor_notifications", on_delete=models.CASCADE)
-#     verb = models.CharField(max_length=255)
-#     target_object_id = models.PositiveIntegerField()
-#     target = GenericForeignKey('target_content_type', 'target_object_id')
-#     timestamp = models.DateTimeField(auto_now_add=True)
-#     read = models.BooleanField(default=False)
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     def __str__(self):
-#         return f'{self.actor} {self.verb} {self.target}'
+    def post(self, request, pk):
+        post = Post.objects.get(id=pk)
+        if Like.objects.filter(user=request.user, post=post).exists():
+            return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        like = Like.objects.create(user=request.user, post=post)
 
+        # Create notification for post like
+        content_type = ContentType.objects.get_for_model(post)
+        Notification.objects.create(
+            recipient=post.author,
+            actor=request.user,
+            verb='liked your post',
+            target_content_type=content_type,
+            target_object_id=post.id
+        )
+
+        return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
+
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = Post.objects.get(id=pk)
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+        except Like.DoesNotExist:
+            return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
