@@ -12,7 +12,7 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         # Use get_object_or_404 to retrieve the Post object
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
 
         # Check if the user has already liked the post, and prevent them from doing so again
         like, created = Like.objects.get_or_create(user=request.user, post=post)
@@ -34,7 +34,7 @@ class LikePostView(APIView):
 
 
 class UnlikePostView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = ["permissions.IsAuthenticated"]
 
     def post(self, request, pk):
         # Use get_object_or_404 to retrieve the Post object
